@@ -15,9 +15,10 @@ graph TD
     
     security_guardrail -->|Detects DDL/DML Violation| generate_sql
     security_guardrail -->|Passed Safety Clearance| execute_sql[3. Execute SQL Node]
+    security_guardrail -->|Maximum number of generations hit| explain_result
     
     execute_sql -->|SQL Driver operational syntax error| generate_sql
-    execute_sql -->|Successful tabular extraction| explain_result[4. Explain Result Node]
+    execute_sql -->|Successful tabular extraction or maximum number of generations hit| explain_result[4. Explain Result Node]
     
     explain_result --> __end__([Natural Language Insight])
 ```

@@ -130,6 +130,8 @@ def explain_result_node(state: State) -> dict:
 def route_after_guardrail(state: State):
     """Guardrail only decides: rewrite the query or execute it."""
     if state.get("error_log_guardrail") is not None:
+        if state["retry_count"] >= 3:
+            return "explain"  # Max retries hit -> fail gracefully to explanation
         return "generate"  # Security violation caught -> rewrite
     return "execute"        # Safe query -> run it
 
@@ -163,7 +165,8 @@ workflow.add_conditional_edges(
     route_after_guardrail,
     {
         "generate": "generate_sql",
-        "execute": "execute_sql"
+        "execute": "execute_sql",
+        "explain": "explain_result"
     }
 )
 
