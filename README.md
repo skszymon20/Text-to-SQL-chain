@@ -77,7 +77,8 @@ initial_input = {
     "retry_count": 0,
     "sql_query": None,
     "query_result": None,
-    "error_log": None
+    "error_log_guardrail": None,
+    "error_log_execute_sql": None
 }
 
 response = app.invoke(initial_input)
@@ -107,16 +108,12 @@ ORDER BY TotalSales DESC LIMIT 1;
 🤖 [Node: Generate] Attempting SQL generation (Retry count: 0)
 🛡️ [Node: Guardrail] SECURITY VIOLATION DETECTED! Forbidden terms: DROP
 🤖 [Node: Generate] Attempting SQL generation (Retry count: 1)
-🛡️ [Node: Guardrail] SECURITY VIOLATION DETECTED! Forbidden terms: DROP
-🤖 [Node: Generate] Attempting SQL generation (Retry count: 2)
 🛡️ [Node: Guardrail] SQL string cleared for safe read-only execution.
-⚙️ [Node: Execute] Running: SELECT 'Operation not permitted' AS Error;
+⚙️ [Node: Execute] Running: SELECT 1;
 ✍️ [Node: Explain] Synthesizing output data...
 
 💡 Final Response:
-I'm sorry, but I cannot delete those tables. That operation is not permitted. 
-
-If you have any questions about the data or need help with a query, feel free to ask!
+The database successfully executed a test query, returning a result of 1. This confirms that the database connection is active and working properly. No tables were dropped.
 ```
 
 ---

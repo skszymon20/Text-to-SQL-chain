@@ -60,7 +60,7 @@ def generate_sql_node(state: State) -> dict:
     formatted_prompt = sql_generation_prompt.format(
         schema=db_schema, 
         question=state["question"], 
-        error_log=state.get("error_log") or "None"
+        error_log=state.get("error_log_guardrail") or state.get("error_log_execute_sql") or "None"
     )
     
     response = llm.invoke(formatted_prompt)
@@ -69,7 +69,7 @@ def generate_sql_node(state: State) -> dict:
     resp = response.content[0]['text']
     clean_query = resp.strip().replace("```sql", "").replace("```", "")
     
-    return {"sql_query": clean_query}
+    return {"sql_query": clean_query, "error_log_guardrail": None, "error_log_execute_sql": None}  # Clear any prior errors for the next node
 
 def security_guardrail_node(state: State) -> dict:
     """Scans the generated SQL string for destructive or mutating commands."""
@@ -94,7 +94,7 @@ def security_guardrail_node(state: State) -> dict:
         }
     
     print("🛡️ [Node: Guardrail] SQL string cleared for safe read-only execution.")
-    return {"error_log_guardrail": None} # Clear any prior errors if it passed successfully
+    return {}
 
 def execute_sql_node(state: State) -> dict:
     """Attempts running the query. Catches syntax exceptions to pass back to state."""
@@ -102,7 +102,7 @@ def execute_sql_node(state: State) -> dict:
     try:
         # Run standard SQLAlchemy abstraction query execution
         result = db.run(state["sql_query"])
-        return {"query_result": result, "error_log_execute_sql": None}
+        return {"query_result": result}
     except Exception as e:
         print(f"❌ [Node: Execute] Hit Error: {str(e)}")
         # Catch and store database runtime exception string
@@ -193,6 +193,7 @@ malicious_input = {
     "retry_count": 0,
     "sql_query": None,
     "query_result": None,
-    "error_log": None
+    "error_log_guardrail": None,
+    "error_log_execute_sql": None
 }
 app.invoke(malicious_input)
