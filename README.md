@@ -45,13 +45,13 @@ graph TD
 ### 1. Installation
 Clone the repository and install the framework configurations inside your preferred virtual environment:
 ```bash
-pip install langgraph langchain langchain-community langchain-google-genai sqlalchemy
+pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment Variables
-Acquire an API access pass from Google AI Studio and expose it inside your active terminal workspace environment:
-```bash
-export GOOGLE_API_KEY="your_gemini_api_key_here"
+Acquire an API access pass from Google AI Studio and put it inside .env file in a directory of this project:
+```
+GOOGLE_API_KEY=your_gemini_api_key_here
 ```
 
 ### 3. File Directory Structure
